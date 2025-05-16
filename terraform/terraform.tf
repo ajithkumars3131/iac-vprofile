@@ -32,5 +32,5 @@ terraform {
     region = "us-east-2" # Specifies AWS region for the backend storage
   }
 
-  required_version = "~> 1.6.3" # Ensures Terraform uses compatible version
+  required_version = "~> 1.12.0" # Ensures Terraform uses compatible version
 }
