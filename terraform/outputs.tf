@@ -12,7 +12,7 @@ output "region" {
   description = "Amazon Web Service EKS Cluster region"
   value       = var.region # Displays the AWS region where the EKS cluster is deployed
 }
-
+##
 output "cluster_security_group_id" {
   description = "Security group ID for the Amazon Web Service EKS Cluster"
   value       = module.eks.cluster_security_group_id # Outputs the security group ID for network access control
