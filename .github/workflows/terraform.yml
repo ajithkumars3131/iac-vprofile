@@ -64,7 +64,43 @@ jobs:
         if: steps.plan.outcome == 'failure'                      # Only run if the plan step failed
         run: exit 1                                              # Forces a failure in the workflow
 
+      - name: Terraform Apply                 # Descriptive name of the step shown in the Actions UI
+        id: apple                             # Unique ID for this step (can be referenced in later steps)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
+                                        # Conditional execution: only run if the workflow is triggered by a push to the 'main' branch
+        run: terraform apply -auto-approve -input=false -parallelism=1 planfile
+                                        # Executes 'terraform apply' using the saved planfile
+                                        # -auto-approve: Skips interactive approval
+                                        # -input=false: Prevents Terraform from asking for input
+                                        # -parallelism=1: Applies resources one at a time (helps avoid throttling or race conditions)
+                                        # planfile: The plan file generated in the previous step (must exist)
 
+      # Step: Configure AWS credentials using GitHub Actions
+      -  name: Configure AWS credentials
+         uses: aws-actions/configure-aws-credentials@v1
+         with:
+         # AWS access key from GitHub Secrets
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+         # AWS secret access key from GitHub Secrets
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+         # AWS region from environment variables
+         aws-region: ${{ env.AWS_REGION }}
+
+    # Step: Get Kubernetes config for accessing the EKS cluster
+      -  name: Get Kube config file
+         id: getconfig
+         # Only run this step if the 'apple' step (Terraform Apply) was successful
+         if: steps.apple.outcome == 'success'
+         # Update kubeconfig to access the EKS cluster
+         # NOTE: The '--name' should ideally be the EKS cluster name, not the region
+         run: aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.AWS_REGION }}
+
+    # Step: Install NGINX Ingress Controller into the EKS cluster
+      -  name: Install Ingress controller
+       # Run only if both Terraform Apply and Kubeconfig steps were successful
+         if: steps.apple.outcome == 'success' && steps.getconfig.outcome == 'success'
+         # Apply the Ingress controller manifest from the official GitHub URL
+         run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/aws/deploy.yaml
 
 
         
