@@ -28,3 +28,5 @@ Locals Block: Defines a local variable cluster_name that holds the name of the E
 Overall, this code is part of a Terraform-based infrastructure-as-code setup to streamline AWS Kubernetes deployments efficiently. Let me know if you need further details or modifications! 🚀
 
 */
+
+#
