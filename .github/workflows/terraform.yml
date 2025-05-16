@@ -64,6 +64,16 @@ jobs:
         if: steps.plan.outcome == 'failure'                      # Only run if the plan step failed
         run: exit 1                                              # Forces a failure in the workflow
 
+      - name: Terraform Apply                 # Descriptive name of the step shown in the Actions UI
+        id: apple                             # Unique ID for this step (can be referenced in later steps)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' 
+                                        # Conditional execution: only run if the workflow is triggered by a push to the 'main' branch
+        run: terraform apply -auto-approve -input=false -parallelism=1 planfile
+                                        # Executes 'terraform apply' using the saved planfile
+                                        # -auto-approve: Skips interactive approval
+                                        # -input=false: Prevents Terraform from asking for input
+                                        # -parallelism=1: Applies resources one at a time (helps avoid throttling or race conditions)
+                                        # planfile: The plan file generated in the previous step (must exist)
 
 
 
