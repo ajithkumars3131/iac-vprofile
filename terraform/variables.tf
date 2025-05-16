@@ -26,5 +26,5 @@ Usage: Helps uniquely identify the EKS cluster within AWS for managing container
 variable "clusterName" {
   description = "Name of the EKS cluster"
   type        = string
-  default     = "kitops-eks"
+  default     = "vproile-action1997"
 }
