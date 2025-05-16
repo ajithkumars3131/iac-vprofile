@@ -20,7 +20,7 @@ Purpose: Defines the name of the Kubernetes cluster created with AWS Elastic Kub
 Default Value: "kitops-eks", but it can be customized per environment.
 
 Usage: Helps uniquely identify the EKS cluster within AWS for managing containerized applications.
-
+#
 */
 
 variable "clusterName" {
