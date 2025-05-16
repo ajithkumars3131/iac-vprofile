@@ -45,8 +45,8 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: init -upgrade 
-       # run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"  # Initializes Terraform with backend config
+        #run: init -upgrade 
+        run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"  # Initializes Terraform with backend config
 
       - name: Terraform format
         id: fmt
@@ -94,7 +94,7 @@ jobs:
          if: steps.apple.outcome == 'success'
          # Update kubeconfig to access the EKS cluster
          # NOTE: The '--name' should ideally be the EKS cluster name, not the region
-         run: aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name 'vproile-action1997'
+         run: aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{  env.EKS_CLUSTER }}
 
     # Step: Install NGINX Ingress Controller into the EKS cluster
       -  name: Install Ingress controller
